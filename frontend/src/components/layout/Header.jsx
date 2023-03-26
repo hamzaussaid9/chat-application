@@ -13,7 +13,8 @@ const Header = () => {
                 width: '100%',
                 justifyContent: 'space-between'
             }}>
-                <Typography sx={{
+                <Typography onClick={()=>navigate('/')} sx={{
+                    cursor: 'pointer',
                     textShadow: ''
                 }} component='h3' variant='h4' color='white'>
                     Chat Application
