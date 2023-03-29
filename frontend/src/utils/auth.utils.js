@@ -25,9 +25,11 @@ const signUpSchema = yup.object().shape({
     confirmpassword:  yup.string().required('confirm password is required.').oneOf([yup.ref('password')], 'passwords do not match.')
 })
 
-export default {
+const authUtills = {
     signUpInitialValue,
     signUpSchema,
     signInInitialValue,
     signInSchema
-};
+}
+
+export default authUtills;

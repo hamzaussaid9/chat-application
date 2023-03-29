@@ -3,7 +3,7 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Chat, Logout } from '@mui/icons-material';
 
-const isLoggedIn = true;
+const isLoggedIn = false;
 
 const Header = () => {
     const navigate = useNavigate();
