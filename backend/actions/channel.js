@@ -2,6 +2,8 @@ const prisma = require('../getPrisma');
 
 const router = require('express').Router();
 
+// get channels
+
 router.get('/', async (req, res, next) => {
    try {
     
@@ -53,6 +55,7 @@ router.get('/', async (req, res, next) => {
    } 
 })
 
+// get specific channel information
 
 router.get('/:id', async (req, res, next) =>{
 
@@ -82,8 +85,11 @@ router.get('/:id', async (req, res, next) =>{
     }
 })
 
+// create a channel
+
 router.post('/', async (req, res, next) => {
     try {
+        
     } catch (error) {
     res.status(500).json({
          success: false,
@@ -92,7 +98,18 @@ router.post('/', async (req, res, next) => {
     } 
 })
 
+// post a message
 
+router.post('/:id', async (req, res, next) => {
+    try {
+        
+    } catch (error) {
+    res.status(500).json({
+         success: false,
+         message: error.message
+     })
+    } 
+})
 
 
 module.exports = router;
