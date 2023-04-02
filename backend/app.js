@@ -2,6 +2,8 @@ const express = require('express');
 const cors = require('cors');
 const prisma = require('./getPrisma')
 const auth = require('./actions/auth');
+const channel = require('./actions/channel');
+const { protect } = require('./actions/middleware/auth.protect');
 
 prisma.$connect().then(()=>console.log("DB connected"))
 .catch(e=> console.log(`error here: ${e}`))
@@ -26,8 +28,11 @@ app.use('/auth', auth)
 
 // protection
 
+app.use(protect);
 
 // actions
+
+app.use('/channel', channel)
 
 
 app.listen(1500, ()=> {

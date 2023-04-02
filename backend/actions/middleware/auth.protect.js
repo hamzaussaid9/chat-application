@@ -22,6 +22,7 @@ exports.protect = async (req, res, next) => {
                 id: decoded.id
             },
             select: {
+                id: true,
                 first_name: true,
                 last_name: true,
                 username: true,
