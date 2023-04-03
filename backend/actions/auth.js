@@ -50,11 +50,11 @@ router.route('/login').post(async (req,res,next) => {
 router.route('/sign-up').post(async (req,res,next) => {
     try {
         const info = {
-            first_name: req.body.first_name,
-            last_name: req.body.last_name,
+            first_name: req.body.firstname,
+            last_name: req.body.lastname,
             username: req.body.username,
             password: req.body.password,
-            role: req.body.role
+            role: 'USER'
         }
 
         const user = await prisma.user.findUnique({

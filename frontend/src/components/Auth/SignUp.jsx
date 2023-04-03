@@ -3,13 +3,18 @@ import { Button, Grid, TextField } from '@mui/material'
 import React from 'react'
 import authUtils from '../../utils/auth.utils'
 import useHandleFormik from '../hooks/useHandleFormik'
+import {authInstance} from '../../utils/axios'
 
-const SignUp = () => {
+const SignUp = ({moveToSignIN}) => {
     const {signUpInitialValue, signUpSchema} = authUtils;
     const handleFormSubmit = async () => {
-
+        const response = await authInstance.post('/auth/sign-up',{...values});
+        console.log(response);
+        if(response.data.success){
+            moveToSignIN();
+        }
     }
-    const {getFieldProps, touched, errors, handleSubmit} = useHandleFormik(signUpInitialValue,signUpSchema, handleFormSubmit);
+    const { values,getFieldProps, touched, errors, handleSubmit} = useHandleFormik(signUpInitialValue,signUpSchema, handleFormSubmit);
   return (
     <form onSubmit={handleSubmit} style={{
         padding: '15px'

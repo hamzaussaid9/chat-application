@@ -8,12 +8,6 @@ router.get('/', async (req, res, next) => {
    try {
     
     const {role, id} = req.User;
-        if(!req.body.title){
-            res.status(404).json({
-                success: false,
-                message: "Chennel title is required"
-            })
-        }
         if(role === 'ADMIN'){
             const channels = await prisma.channel.findMany({
                 select: {
@@ -89,7 +83,36 @@ router.get('/:id', async (req, res, next) =>{
 
 router.post('/', async (req, res, next) => {
     try {
-        
+        const {id} = req.User;
+        const {title, users} = req.body;
+        if(!title){
+            res.status(404).json({
+                success: false,
+                message: "Channel title is required"
+            })
+        }
+        if(!users || users.length < 1){
+            users = [id];
+        }
+        else{
+            users.push(id);
+        }
+        await prisma.channel.create({
+            data: {
+                title: req.body.title,
+                created_by: {
+                    connect: id
+                },
+                ownerId: id,
+                users: {
+                    connect: users.map((userId)=> ({id: userId}))
+                }
+            }
+        })
+        res.json(200).json({
+            success: true,
+            message: "Channel has been created"
+        })
     } catch (error) {
     res.status(500).json({
          success: false,

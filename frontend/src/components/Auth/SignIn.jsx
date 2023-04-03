@@ -1,14 +1,22 @@
 import { Button, TextField } from '@mui/material'
 import {Login} from '@mui/icons-material';
-import React from 'react'
+import React from 'react';
+import { useNavigate} from 'react-router-dom';
 import auth from '../../utils/auth.utils';
 import useHandleFormik from '../hooks/useHandleFormik';
+import {authInstance} from '../../utils/axios';
 const SignIn = () => {
+    const navigate = useNavigate(); 
     const { signInInitialValue, signInSchema} = auth;
     const handleFormSubmit = async () => {
-
+      const response = await authInstance.post('/auth/login',{...values});
+      console.log(response);
+      if(response.data.success){
+        localStorage.setItem('token', response.data.token);
+        navigate('/')
+      }
     }
-    const { getFieldProps, errors, touched, handleSubmit } = useHandleFormik(signInInitialValue,signInSchema, handleFormSubmit);
+    const { values, getFieldProps, errors, touched, handleSubmit } = useHandleFormik(signInInitialValue,signInSchema, handleFormSubmit);
   return (
     <form onSubmit={handleSubmit} style={{
         padding: '15px'

@@ -12,7 +12,7 @@ const Auth = () => {
             <Tab label="Sign Up" />
             <Tab label="Sign In" />
         </Tabs>
-        {activeTab ? <SignIn /> : <SignUp />}
+        {activeTab ? <SignIn /> : <SignUp moveToSignIN={()=>setActiveTab(1)} />}
     </Paper>
   )
 }

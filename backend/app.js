@@ -26,9 +26,62 @@ app.get('/delete', async (req, res, next) =>{
 
 app.use('/auth', auth)
 
+app.get('/users', async (req, res, next)=>{
+    try {
+        const users = await prisma.user.findMany({
+            where: {
+                role: 'USER'
+            },
+            select: {
+                id: true,
+                username: true,
+                first_name: true,
+                last_name: true,
+            }
+        })
+        res.status(200).json({
+            success: true,
+            users
+        })
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        }) 
+    }
+})
+
 // protection
 
 app.use(protect);
+
+app.get('/get-user', async (req, res, next)=>{
+    try {
+        const {id} = req.User;
+    const user = await prisma.user.findUniqueOrThrow({
+        where: {
+            id: id
+        },
+        select: {
+            id: true,
+            first_name: true,
+            last_name: true,
+            username: true
+        }
+    })
+
+    res.status(200).json({
+        success: true,
+        user
+    })
+        
+    } catch (error) {
+        res.status(404).json({
+            success: false,
+            message: error.message
+        })        
+    }
+})
 
 // actions
 

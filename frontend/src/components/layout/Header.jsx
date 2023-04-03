@@ -1,13 +1,22 @@
 import { AppBar, Avatar, Box, Button, IconButton, ListItemIcon, Menu, MenuItem, Stack, Toolbar, Tooltip, Typography } from '@mui/material'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Chat, Logout } from '@mui/icons-material';
-
-const isLoggedIn = false;
+import { useSelector, useDispatch } from 'react-redux'; 
+import { loginAsync, logout } from '../slices/auth.slice';
 
 const Header = () => {
+    const dispatch = useDispatch();
+    const { isLoggedIn } = useSelector(state => state.auth)
     const navigate = useNavigate();
     const [anchorEl, setAnchorEl] = React.useState(null);
+    const checkAuth = async () =>{
+        console.log('header called');
+        dispatch(loginAsync());
+    } 
+    useEffect(()=>{
+        checkAuth();
+    },[])
     const open = Boolean(anchorEl);
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
@@ -15,6 +24,11 @@ const Header = () => {
     const handleClose = () => {
         setAnchorEl(null);
     };
+    const handleLogout = () =>{
+        dispatch(logout());
+        navigate('/'); 
+        handleClose();
+    }
   return (
     <AppBar sx={{marginBottom: '15px'}} position='relative' elevation={6}>
         <Toolbar>
@@ -49,7 +63,7 @@ const Header = () => {
                                 </ListItemIcon>
                                 Channels
                             </MenuItem>
-                            <MenuItem onClick={handleClose}>
+                            <MenuItem onClick={handleLogout}>
                                 <ListItemIcon>
                                     <Logout fontSize="small" />
                                 </ListItemIcon>
