@@ -26,17 +26,35 @@ app.get('/delete', async (req, res, next) =>{
 
 app.use('/auth', auth)
 
+
+// protection
+
+app.use(protect);
+
+
 app.get('/users', async (req, res, next)=>{
     try {
+        const {id} = req.User;
         const users = await prisma.user.findMany({
             where: {
-                role: 'USER'
+                AND: [
+                    {
+                        role: 'USER'
+                    },
+                    {
+                        NOT: {
+                            id: id 
+                        }
+                    }
+
+                ]
             },
             select: {
                 id: true,
                 username: true,
                 first_name: true,
                 last_name: true,
+                role: true
             }
         })
         res.status(200).json({
@@ -51,10 +69,6 @@ app.get('/users', async (req, res, next)=>{
     }
 })
 
-// protection
-
-app.use(protect);
-
 app.get('/get-user', async (req, res, next)=>{
     try {
         const {id} = req.User;
@@ -66,7 +80,8 @@ app.get('/get-user', async (req, res, next)=>{
             id: true,
             first_name: true,
             last_name: true,
-            username: true
+            username: true,
+            role: true
         }
     })
 

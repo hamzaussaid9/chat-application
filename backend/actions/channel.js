@@ -39,7 +39,7 @@ router.get('/', async (req, res, next) => {
         })
         res.status(200).json({
             success: true,
-            channels
+            channels: channels.channels
         })
    } catch (error) {
     res.status(500).json({
@@ -85,18 +85,18 @@ router.post('/', async (req, res, next) => {
     try {
         const {id} = req.User;
         const {title, users} = req.body;
-        if(!title){
+        if(!title || !users){
             res.status(404).json({
                 success: false,
-                message: "Channel title is required"
+                message: "Channel detaisl is required"
             })
         }
-        if(!users || users.length < 1){
-            users = [id];
-        }
-        else{
-            users.push(id);
-        }
+        // if(!users || users.length < 1){
+        //     users = [id];
+        // }
+        // else{
+        //     users.push(id);
+        // }
         await prisma.channel.create({
             data: {
                 title: req.body.title,

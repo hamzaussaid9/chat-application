@@ -1,14 +1,15 @@
-import { AppBar, Avatar, Box, Button, IconButton, ListItemIcon, Menu, MenuItem, Stack, Toolbar, Tooltip, Typography } from '@mui/material'
+import { AppBar, Avatar, Box, Button, Divider, IconButton, ListItem, ListItemIcon, ListItemText, Menu, MenuItem, Stack, Toolbar, Tooltip, Typography } from '@mui/material'
 import React, { useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { Chat, Logout } from '@mui/icons-material';
 import { useSelector, useDispatch } from 'react-redux'; 
 import { loginAsync, logout } from '../slices/auth.slice';
 
 const Header = () => {
     const dispatch = useDispatch();
-    const { isLoggedIn } = useSelector(state => state.auth)
+    const { isLoggedIn, user } = useSelector(state => state.auth)
     const navigate = useNavigate();
+    const location = useLocation();
     const [anchorEl, setAnchorEl] = React.useState(null);
     const checkAuth = async () =>{
         console.log('header called');
@@ -50,19 +51,26 @@ const Header = () => {
                         isLoggedIn ? <React.Fragment>
                             <Tooltip title="Action Options">
                                 <IconButton onClick={handleClick}>
-                                    <Avatar sx={{ width: 32, height: 32}}>H</Avatar>
+                                    <Avatar sx={{ width: 32, height: 32}}>{user && user.first_name[0].toUpperCase()}</Avatar>
                                 </IconButton>
                             </Tooltip>
                             <Menu open={open} anchorEl={anchorEl} onClose={handleClose}
                                 transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                                 anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
                         >
-                            <MenuItem onClick={handleClose}>
+                                <ListItem>
+                                    <ListItemText primary={`Hi! ${user.first_name} ${user.last_name}`} secondary={user.username} />
+                                </ListItem>
+                            <Divider />
+                            {/* <MenuItem onClick={()=>{
+                                    navigate('/channels');
+                                    handleClose();
+                                }}>
                                 <ListItemIcon>
                                     <Chat fontSize="small" />
                                 </ListItemIcon>
                                 Channels
-                            </MenuItem>
+                            </MenuItem> */}
                             <MenuItem onClick={handleLogout}>
                                 <ListItemIcon>
                                     <Logout fontSize="small" />
@@ -70,7 +78,7 @@ const Header = () => {
                                 Log out
                             </MenuItem>
                         </Menu>
-                        <Button startIcon={<Chat />}  sx={{color: 'white'}}>
+                        <Button onClick={()=>navigate('/channels')} startIcon={<Chat />}  sx={{color: 'white'}}>
                             Channels
                         </Button>
                         </React.Fragment> : 

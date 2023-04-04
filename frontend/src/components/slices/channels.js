@@ -2,14 +2,14 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
 import { actionInstance } from "../../utils/axios"
 
 
-export const getUsersThunk = createAsyncThunk('get-users', async (params,{rejectWithValue})=>{
-    const response = await actionInstance.get('/users');
-    console.log('all users thunk', response);
+export const getChannelsThunk = createAsyncThunk('get-channels', async (params,{rejectWithValue})=>{
+    const response = await actionInstance.get('/channel');
+    console.log('all channels thunk', response);
     if(response.data.success){
-        return response.data.users;
+        return response.data.channels;
     }
     else {
-        console.log('error from all users thunk');
+        console.log('error from all channels thunk');
         return rejectWithValue(response.data.message);
     }
 })
@@ -17,44 +17,44 @@ export const getUsersThunk = createAsyncThunk('get-users', async (params,{reject
 
 const initialState = {
     isLoading: true,
-    users: [],
+    channels: [],
     errorMessage: ''
 }
 
-export const usersSlice = createSlice({
-    name: 'users',
+export const channelsSlice = createSlice({
+    name: 'channels',
     initialState,
     reducers: {
 
     },
     extraReducers: builder =>{
-        builder.addCase(getUsersThunk.pending, (state)=> {
+        builder.addCase(getChannelsThunk.pending, (state)=> {
             return {
                 ...state,
                 isLoading: true
             }
         })
 
-        builder.addCase(getUsersThunk.rejected, (state, {payload})=>{
+        builder.addCase(getChannelsThunk.rejected, (state, {payload})=>{
             return {
                 ...state,
                 errorMessage: payload,
                 isLoading: false,
-                users: []
+                channels: []
             }
         })
 
-        builder.addCase(getUsersThunk.fulfilled, (state, {payload})=>{
+        builder.addCase(getChannelsThunk.fulfilled, (state, {payload})=>{
             return {
                 ...state,
                 isLoading: false,
-                users: payload,
+                channels: payload,
                 errorMessage: ''
             }
         })
     }
 })
 
-export const {} = usersSlice.actions;
+export const {} = channelsSlice.actions;
 
-export default usersSlice.reducer;
+export default channelsSlice.reducer;
