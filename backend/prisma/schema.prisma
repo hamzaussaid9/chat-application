@@ -56,9 +56,9 @@ model Message {
   channel   Channel @relation(fields: [channelId], references: [id], onDelete: Cascade)
   channelId Int
 
-  Parent   Message   @relation("parent_child", fields: [parentId], references: [id], onDelete: Cascade)
+  Parent   Message?   @relation("parent_child", fields: [parentId], references: [id], onDelete: Cascade)
   children Message[] @relation("parent_child")
-  parentId String
+  parentId String?
 
   likes Like[]
 }

@@ -1,30 +1,46 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { getUsersThunk } from '../components/slices/allUsers.slice';
 import { useDispatch } from 'react-redux';
 import { getChannelsThunk } from '../components/slices/channels';
 import { Container, Grid } from '@mui/material';
 import ChannelList from '../components/channels/ChannelList';
-import CreateChannel from '../components/channels/CreateChannel';
+import SelectedChannel from '../components/channels/SelectedChannel';
+import { getChannelDetailsThunk, reset } from '../components/slices/channelMessages.slice';
 const Channels = () => {
   const dispatch = useDispatch();
-  const getUsers = async () =>{
+  const [selectedChannel, setSelectedChannel] = useState(null);
+  const handleSelection = (channelId) => {
+    if (selectedChannel !== channelId)
+      setSelectedChannel(channelId);
+  }
+  const getUsers = async () => {
     dispatch(getUsersThunk());
   }
-  const getChannels = async () =>{
+  const getChannels = async () => {
     dispatch(getChannelsThunk());
   }
-  useEffect(()=>{
+  const getChannelDetails = async () =>{
+    dispatch(getChannelDetailsThunk({id: selectedChannel}));
+  }
+  useEffect(() => {
+    setSelectedChannel(null);
+    dispatch(reset());
     getUsers();
     getChannels();
-  },[])
+  }, [])
+  useEffect(() => {
+    if(selectedChannel){
+      getChannelDetails(); 
+    }
+  }, [selectedChannel])
   return (
     <Container maxWidth="lg">
-      <Grid container spacing={3}>
-        <Grid item xs={12} sm={6} md={4} lg={4}>
-          <ChannelList />
+      <Grid container rowSpacing={3}>
+        <Grid item xs={12} sm={5} md={4} lg={4}>
+          <ChannelList selectedChannel={selectedChannel} handleSelection={handleSelection} />
         </Grid>
-        <Grid item xs={12} sm={6} md={8} lg={8}>
-          <CreateChannel />
+        <Grid item xs={12} sm={7} md={8} lg={8}>
+          <SelectedChannel />
         </Grid>
       </Grid>
     </Container>

@@ -57,14 +57,23 @@ router.get('/:id', async (req, res, next) =>{
         const {id} = req.params;
         const channel = await prisma.channel.findUniqueOrThrow({
             where: {
-                id: id
+                id: parseInt(id)
             },
             select: {
                 id: true,
                 title: true,
                 users: true,
                 created_by: true,
-                messages: true,
+                messages: {
+                    include: {
+                        likes: true,
+                        children: true,                        
+                    },
+                    orderBy: {
+                        createdAt: 'desc'
+                    }
+                },
+                ownerId: true
             }
         })
         res.status(200).json({
@@ -88,7 +97,7 @@ router.post('/', async (req, res, next) => {
         if(!title || !users){
             res.status(404).json({
                 success: false,
-                message: "Channel detaisl is required"
+                message: "Channel details are required"
             })
         }
         // if(!users || users.length < 1){
@@ -100,9 +109,6 @@ router.post('/', async (req, res, next) => {
         await prisma.channel.create({
             data: {
                 title: req.body.title,
-                created_by: {
-                    connect: id
-                },
                 ownerId: id,
                 users: {
                     connect: users.map((userId)=> ({id: userId}))
@@ -125,7 +131,34 @@ router.post('/', async (req, res, next) => {
 
 router.post('/:id', async (req, res, next) => {
     try {
-        
+        const {id} = req.params;
+        const user = req.User;
+        const {message} = req.body; 
+        const msg = await prisma.message.create({
+            data: {
+                message: message,
+                channel: {
+                    connect: {
+                        id: parseInt(id)
+                    }
+                },
+                user: {
+                    connect: {
+                        id: user.id
+                    }
+                }
+            }
+        });
+        if(msg.id){
+            res.status(200).json({
+                success: true,
+                message: "message sent"
+            })
+        }
+        res.status(200).json({
+            success: false,
+            message: "message not sent"
+        })
     } catch (error) {
     res.status(500).json({
          success: false,

@@ -4,6 +4,7 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import { Add, Chat, Logout } from '@mui/icons-material';
 import { useSelector, useDispatch } from 'react-redux';
 import { loginAsync, logout } from '../slices/auth.slice';
+import CreateChannel from '../channels/CreateChannel';
 
 const Header = () => {
     const dispatch = useDispatch();
@@ -11,6 +12,8 @@ const Header = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const [anchorEl, setAnchorEl] = React.useState(null);
+    const [creatingChannel, setCreatingChannel] = React.useState(false);
+    const closeCreatingChannel = () => setCreatingChannel(false);
     const checkAuth = async () => {
         console.log('header called');
         dispatch(loginAsync());
@@ -80,7 +83,7 @@ const Header = () => {
                                 </Menu>
                                 {
                                     location.pathname === '/channels' ? (
-                                        <Button startIcon={<Add />} sx={{ color: 'white' }}>
+                                        <Button onClick={()=> setCreatingChannel(true)} startIcon={<Add />} sx={{ color: 'white' }}>
                                             Create new Channel
                                         </Button>
                                     ) : (
@@ -95,6 +98,7 @@ const Header = () => {
                                 </Button>
                         }
                     </Stack>
+                    <CreateChannel open={creatingChannel} handleCLose={closeCreatingChannel} />
                 </Box>
             </Toolbar>
         </AppBar>
