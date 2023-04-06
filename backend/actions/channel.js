@@ -211,4 +211,40 @@ router.post('/:id', async (req, res, next) => {
 })
 
 
+router.delete('/:id', async (req, res, next) => {
+    try {
+        const { role} = req.User;
+        const {id} = req.params;
+        if(role !== "ADMIN"){
+            res.status(401).json({
+                success: false,
+                message: "unauthorize for this action"
+            })
+        }
+        const del = await prisma.channel.delete({
+            where: {
+                id: parseInt(id)
+            },
+            include: {
+                messages: {
+                    include: {
+                        children: true,
+                        likes: true,
+                    }
+                }
+            }
+        })
+       res.send(200).json({
+        success: true,
+        message: "chanenl deleted"
+       }) 
+        
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        }) 
+    }
+})
+
 module.exports = router;

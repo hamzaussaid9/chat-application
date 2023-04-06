@@ -6,6 +6,7 @@ import { Container, Grid } from '@mui/material';
 import ChannelList from '../components/channels/ChannelList';
 import SelectedChannel from '../components/channels/SelectedChannel';
 import { getChannelDetailsThunk, reset } from '../components/slices/channelMessages.slice';
+import { actionInstance } from '../utils/axios';
 const Channels = () => {
   const dispatch = useDispatch();
   const [selectedChannel, setSelectedChannel] = useState(null);
@@ -22,6 +23,13 @@ const Channels = () => {
   const getChannelDetails = async () =>{
     dispatch(getChannelDetailsThunk({id: selectedChannel}));
   }
+  const deleteChannel = async () =>{
+    const response = await actionInstance.delete(`/channel/${selectedChannel}`)
+    console.log(response);
+    setSelectedChannel(null);
+    getChannels();
+    dispatch(reset());
+}
   useEffect(() => {
     setSelectedChannel(null);
     dispatch(reset());
@@ -40,7 +48,7 @@ const Channels = () => {
           <ChannelList selectedChannel={selectedChannel} handleSelection={handleSelection} />
         </Grid>
         <Grid item xs={12} sm={7} md={8} lg={8}>
-          <SelectedChannel />
+          <SelectedChannel deleteChannel={deleteChannel} />
         </Grid>
       </Grid>
     </Container>

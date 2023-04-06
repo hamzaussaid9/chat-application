@@ -1,6 +1,6 @@
-import { CancelOutlined, MoreVert, Search } from '@mui/icons-material';
+import { CancelOutlined, Search } from '@mui/icons-material';
 import { Avatar, Box, IconButton, InputAdornment, List, ListItem, ListItemAvatar, ListItemButton, ListItemSecondaryAction, ListItemText, MenuList, TextField, Typography } from '@mui/material';
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
 import useGetDimensions from '../hooks/useGetDimensions';
 
@@ -9,6 +9,12 @@ const ChannelList = ({selectedChannel,handleSelection}) => {
     const { isLoading, channels } = useSelector(state => state.channels);
     const { user } = useSelector(state => state.auth);
     const [searchString, setSearchString] = useState('');
+
+    const handleSearch = (channel) => {
+        if(searchString.trim().length === 0)
+            return true;
+        return channel && channel.title.includes(searchString.trim());
+    }
     const createdBY = (channel) => {
         if (channel.created_by.id === user?.id)
             return "created by: You";
@@ -34,10 +40,10 @@ const ChannelList = ({selectedChannel,handleSelection}) => {
                 }}
             />
             {
-                channels && channels.length > 0 ? (
+                channels && channels.filter(handleSearch).length > 0 ? (
                     <List sx={{ overflowY: 'scroll', height:height - 250}}>
                         {
-                            channels.map(channel => (
+                            channels.filter(handleSearch).map(channel => (
                                 <ListItem key={channel.id}>
                                     <ListItemButton selected={selectedChannel === channel.id} onClick={()=>handleSelection(channel.id)}>
                                         <ListItemAvatar>
@@ -50,7 +56,7 @@ const ChannelList = ({selectedChannel,handleSelection}) => {
                         }
                     </List>
                 ) : (
-                    <Typography>
+                    <Typography component="p" variant='body1' textAlign="center" margin="15px auto">
                         No Channels found
                     </Typography>
                 )

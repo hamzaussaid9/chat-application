@@ -1,12 +1,13 @@
-import { CancelOutlined, Favorite, KeyboardArrowDown, KeyboardArrowRight, Reply, Send } from '@mui/icons-material';
-import { Avatar, Button, Collapse, Divider, Grid, IconButton, InputAdornment, List, ListItem, ListItemAvatar, ListItemSecondaryAction, ListItemText, Stack, TextField, Tooltip } from '@mui/material';
-import React, { useState } from 'react'
+import { CancelOutlined, Delete, Favorite, FavoriteBorder, KeyboardArrowDown, KeyboardArrowRight, Reply, Send } from '@mui/icons-material';
+import { Avatar, Button, Collapse, Divider, Grid, IconButton, InputAdornment, List, ListItem, ListItemAvatar, ListItemSecondaryAction, ListItemText, Stack, TextField, Tooltip, Typography } from '@mui/material';
+import React, { memo, useState } from 'react'
 import { actionInstance } from '../../utils/axios';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { getChannelDetailsThunk } from '../slices/channelMessages.slice';
 
-const Message = ({ message }) => {
+const Message = memo(({ message }) => {
     const dispatch = useDispatch();
+    const { user } = useSelector(state => state.auth);
     const [open, setOpen] = useState(false);
     const [reply, setReply] = useState('');
     const [replying, setReplying] = useState(false);
@@ -27,6 +28,11 @@ const Message = ({ message }) => {
         const response = await actionInstance.post('/message/like-unlike', {
             messageId: message.id
         })
+        console.log(response);
+        dispatch(getChannelDetailsThunk({ id: message.channelId }));
+    }
+    const handleDelete = async () =>{
+        const response = await actionInstance.post(`/message/${message.id}`);
         console.log(response);
         dispatch(getChannelDetailsThunk({ id: message.channelId }));
     }
@@ -79,9 +85,17 @@ const Message = ({ message }) => {
                         {message.children.length}
                     </Button>
                 }
-                <Button onClick={handleLikeUnlike} color='error' endIcon={<Favorite />}>
+                <Button onClick={handleLikeUnlike} color='error' endIcon={ message.likes.some(msg => msg.userId === user.id) ? <Favorite />: <FavoriteBorder />}>
                     {message.likes.length}
                 </Button>
+                {
+                    (message.userId === user.id || user.role === 'ADMIN') && 
+                    (
+                        <IconButton size="small" onClick={handleDelete} color='error'>
+                            <Delete />
+                        </IconButton>
+                    )
+                }
             </Stack>
             <Collapse in={open}>
                 {
@@ -97,11 +111,13 @@ const Message = ({ message }) => {
                                     }
                                 </Grid>
                             </Grid>
-                        ) : "No replies"
+                        ) : <Typography component="p" variant='caption' paddingLeft="15px">
+                            No Replies
+                        </Typography>
                 }
             </Collapse>
         </List>
     )
-}
+})
 
 export default Message
