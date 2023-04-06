@@ -65,7 +65,7 @@ const CreateChannel = ({open, handleCLose}) => {
                         }}
                         fullWidth
                         renderInput={(params) => (
-                            <TextField {...params} margin='normal' label="Select Users" placeholder='Users' required />
+                            <TextField {...params} margin='normal' label="Select Users" placeholder='search by username or name' required />
                         )}
                     />
             </DialogContent>

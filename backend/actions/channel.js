@@ -67,10 +67,22 @@ router.get('/:id', async (req, res, next) =>{
                 messages: {
                     include: {
                         likes: true,
-                        children: true,                        
+                        children: {
+                            include: {
+                                user: true,
+                                likes: true,
+                                children: {
+                                    include: {
+                                        user: true,
+                                        likes: true,
+                                    }       
+                                }
+                            }
+                        },
+                        user: true,                        
                     },
                     orderBy: {
-                        createdAt: 'desc'
+                        createdAt: 'asc'
                     }
                 },
                 ownerId: true
@@ -133,7 +145,36 @@ router.post('/:id', async (req, res, next) => {
     try {
         const {id} = req.params;
         const user = req.User;
-        const {message} = req.body; 
+        const {message, parentId} = req.body;
+        if(parentId){
+            const msg = await prisma.message.create({
+                data: {
+                    message: message,
+                    Parent: {
+                        connect: {
+                            id: parentId
+                        }
+                    },
+                    channel: {
+                        connect: {
+                            id: parseInt(id)
+                        }
+                    },
+                    user: {
+                        connect: {
+                            id: user.id
+                        }
+                    }
+                }
+            });
+            if(msg.id){
+                res.status(200).json({
+                    success: true,
+                    message: "message sent"
+                })
+            }
+        }
+        else{ 
         const msg = await prisma.message.create({
             data: {
                 message: message,
@@ -155,10 +196,12 @@ router.post('/:id', async (req, res, next) => {
                 message: "message sent"
             })
         }
-        res.status(200).json({
+    }
+        res.status(400).json({
             success: false,
             message: "message not sent"
         })
+        
     } catch (error) {
     res.status(500).json({
          success: false,

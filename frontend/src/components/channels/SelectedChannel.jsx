@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { MoreVert, Notes, Send } from '@mui/icons-material';
 import { actionInstance } from '../../utils/axios';
 import { getChannelDetailsThunk } from '../slices/channelMessages.slice';
+import Message from '../message/Message';
 
 const SelectedChannel = () => {
     const { height } = useGetDimensions();
@@ -15,7 +16,8 @@ const SelectedChannel = () => {
     const sendMessage = async (e) =>{
         e.preventDefault();
         const response = await actionInstance.post(`/channel/${channel.id}`, {
-            message
+            message,
+            parentId: null
         })
         if(response.data.success){
             setMessage('');
@@ -45,15 +47,16 @@ const SelectedChannel = () => {
                                 </IconButton>
                             </ListItemSecondaryAction>
                         </ListItem>
-                        <ListItem sx={{height: height-250, overflowY: 'scroll'}}>
-
-                        </ListItem>
+                        <Stack  sx={{height: height-250, overflowY: 'scroll'}}>
+                            {
+                                channel.messages.filter(message => message.parentId === null).map(message => <Message message={message} key={message.id} />)
+                            }
+                        </Stack>
                         <ListItem>
                             <form style={{width: '100%'}} onSubmit={sendMessage}>
                             <TextField
                                 placeholder='Write here'
                                 fullWidth
-                                multiline
                                 maxRows={1}
                                 color='primary'
                                 value={message}
