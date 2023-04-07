@@ -1,14 +1,14 @@
 import axios from 'axios';
 
 export const authInstance = axios.create({
-    baseURL: 'http://localhost:1500',
+    baseURL: 'http://api:1500',
     headers: {
         'Content-Type': 'application/json'
     }
 })
 
 export const actionInstance = axios.create({
-    baseURL: 'http://localhost:1500',
+    baseURL: 'http://api:1500',
     headers: {
         'Content-Type': 'application/json'
     }

@@ -1,30 +1,29 @@
-version: "3"
+version: "3.8"
 services:
-  backend:
-    build: ./backend
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    command: npm start
     ports:
       - "1500:1500"
     environment:
-      - DATABASE_URL=mysql://root:mypassword@localhost:3306/chat
+      - NODE_ENV=production
+      - DATABASE_URL=mysql://root:mypassword@localhost:3306/chat1
     depends_on:
       - db
-  frontend:
-    build: ./frontend
+  client:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
     ports:
       - "3000:3000"
-  db:
-    image: mysql:5.7
     environment:
-      - MYSQL_USER=root
-      - MYSQL_ROOT_PASSWORD=mypassword
-      - MYSQL_DATABASE=chat
-    volumes:
-      - db_data:/var/lib/mysql
-  prisma:
-    build: ./backend
-    command: ["npx", "prisma", "migrate", "dev"]
-    depends_on:
-      - db
-volumes:
-  db_data:
-
+      - NODE_ENV=production
+      - REACT_APP_API_URL=http://api:1500
+  db:
+    image: mysql:8.0.23
+    environment:
+      MYSQL_DATABASE: chat1
+      MYSQL_USER: root
+      MYSQL_PASSWORD: mypassword
