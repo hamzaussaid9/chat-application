@@ -7,4 +7,4 @@ RUN npm ci --only=production
 
 COPY . .
 
-CMD ["npx", "prisma", "migrate", "deploy"]
+CMD ["npx", "prisma", "migrate", "dev"]

@@ -1,5 +1,12 @@
 version: "3.8"
 services:
+  db:
+    image: mysql:8.0.23
+    environment:
+      MYSQL_DATABASE: chat1
+      MYSQL_USER: uzair
+      MYSQL_PASSWORD: mypassword
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
   api:
     build:
       context: ./backend
@@ -9,7 +16,7 @@ services:
       - "1500:1500"
     environment:
       - NODE_ENV=production
-      - DATABASE_URL=mysql://root:mypassword@localhost:3306/chat1
+      - DATABASE_URL=mysql://uzair:mypassword@localhost:3306/chat1
     depends_on:
       - db
   client:
@@ -21,9 +28,3 @@ services:
     environment:
       - NODE_ENV=production
       - REACT_APP_API_URL=http://api:1500
-  db:
-    image: mysql:8.0.23
-    environment:
-      MYSQL_DATABASE: chat1
-      MYSQL_USER: root
-      MYSQL_PASSWORD: mypassword
